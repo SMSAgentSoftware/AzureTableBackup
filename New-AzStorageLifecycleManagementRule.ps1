@@ -5,9 +5,9 @@
 #! Run this for each storage account where you are backing up tables with this solution !#
 
 # Set the parameters for the storage account
-$azSubscription = "<MyAzureSubscription>"
-$resourceGroupName = "<ResourceGroup>"
-$storageAccountName = "<StorageAccount>"
+$azSubscription = "<subscription name>"
+$resourceGroupName = "<resource group name>"
+$storageAccountName = "<storage account name>"
 $retentionPeriod = 180 # days
 $backupContainerName = "tablebackups"
 $ruleName = "Purge old table backups"

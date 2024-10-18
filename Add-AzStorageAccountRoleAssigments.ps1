@@ -6,9 +6,9 @@
 ## Check required modules
 #Requires -Modules Az.Accounts,Az.Resources
 
-$Tenant = "<tenantId>"# The ID of the tenant containing your Azure subscription
-$Subscription = "<subscriptionName>" # The name of the Azure subscription which hosts your resources
-$StorageAccountName = "<storageAccountName" # The name of the storage account containing the tables you want to backup
+$Tenant = "<tenant Id>"# The ID of the tenant containing your Azure subscription
+$Subscription = "<subscription name>" # The name of the Azure subscription which hosts your resources
+$StorageAccountName = "<storage account name>" # The name of the storage account containing the tables you want to backup
 
 # Connect to Azure AD
 try 

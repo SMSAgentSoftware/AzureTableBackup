@@ -8,8 +8,8 @@
 #Requires -Modules Az.Accounts,Az.Resources,Az.Storage,Az.OperationalInsights,Az.ApplicationInsights,Az.Functions,Az.WebSites
 
 ### VARIABLES TO SET
-$Tenant = "<Tenant>"# The ID of the tenant containing your Azure subscription
-$Subscription = "<Subscription>" # The name of the Azure subscription which will host your resources
+$Tenant = "<tenant Id>"# The ID of the tenant containing your Azure subscription
+$Subscription = "<subscription name>" # The name of the Azure subscription which will host your resources
 $Location = "East US" # The Azure region for your resources. Find available regions like so: Get-AzLocation | Where {$_.RegionType -eq "Physical"} | Select -ExpandProperty DisplayName | Sort, or here: https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/#select-geography
 ###
 
@@ -213,6 +213,7 @@ $AppSettings = @{
     'BackupConfigurationStorageTable' = $BackupConfigurationTableName
     'BackupConfigurationTimerExpression' = "0 0 1 * * *"
     'WEBSITE_RUN_FROM_PACKAGE' = "1"
+    'FUNCTIONS_WORKER_RUNTIME' = "dotnet-isolated"   
 }
 try 
 {
@@ -222,7 +223,7 @@ try
         -Location $Location `
         -ResourceGroupName $ResourceGroupName `
         -Runtime DotNet `
-        -RuntimeVersion 6 `
+        -RuntimeVersion 8 `
         -FunctionsVersion 4 `
         -OSType Windows `
         -IdentityType SystemAssigned `
@@ -326,7 +327,6 @@ catch
 
 # Create backup container
 Write-Host "Creating a backup container..." -NoNewline
-
 Write-Host "$BackupContainerName..." -NoNewline
 try 
 {
@@ -347,7 +347,7 @@ catch
 Write-Host "Adding storage configuration table to backup..." -NoNewline
 try 
 {
-    $StorageToken = (Get-AzAccessToken -ResourceTypeName Storage -ErrorAction Stop).Token
+    $StorageToken = (Get-AzAccessToken -ResourceTypeName Storage -AsSecureString -ErrorAction Stop).Token | ConvertFrom-SecureString -AsPlainText
     $GetStorageToken = $true
 }
 catch 
@@ -391,7 +391,7 @@ if ($GetStorageToken)
 
 # Download the ZIP deploy package
 Write-Host "Downloading ZIP deploy package..." -NoNewline
-$URL = "https://github.com/SMSAgentSoftware/AzureTableBackup/raw/main/backupAzureTables.zip"
+$URL = "https://github.com/SMSAgentSoftware/AzureTableBackup/raw/main/backupAzureTableNet8.zip"
 $FileName = $URL.Split('/')[-1]
 $Destination = "$env:USERPROFILE\Downloads\$Filename"
 $Response = Invoke-WebRequest -Uri $URL -OutFile $Destination -UseBasicParsing -ErrorAction SilentlyContinue
